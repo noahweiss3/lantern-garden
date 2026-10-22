@@ -1,0 +1,64 @@
+name: Report a bug
+description: Something in the garden did not behave as expected.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping make the garden clearer and more reliable. Please use synthetic data and remove names, private journal files, credentials, and personal screenshots. For a security vulnerability, follow SECURITY.md instead of posting details here.
+  - type: input
+    id: revision
+    attributes:
+      label: Branch or commit
+      description: Which review checkpoint or revision did you use?
+      placeholder: feature/act-5-restoration-and-transfer
+    validations:
+      required: true
+  - type: dropdown
+    id: build-mode
+    attributes:
+      label: How did you open the game?
+      options:
+        - Production app or preview
+        - Portable Lantern-Garden-Review.html file
+        - Development server
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and device
+      description: Browser/version, operating system, and device type. No identifying information is needed.
+    validations:
+      required: true
+  - type: input
+    id: lesson
+    attributes:
+      label: Lesson and activity
+      description: Include Flat/3D view or offline status if relevant.
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include a minimal program if it helps. Use invented data.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What actually happened?
+      description: Include the exact visible error and whether your program or progress was affected.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Optional evidence
+      description: Share a cropped, non-personal screenshot or test result only if useful. Distinguish a real browser observation from a simulation.
