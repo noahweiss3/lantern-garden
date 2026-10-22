@@ -1,0 +1,38 @@
+name: Suggest an improvement
+description: Propose a clearer learning moment, recovery path, or interface.
+title: "[Idea] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Focus on the learner's next decision. Please do not include real learner names, ages, school details, or private journals. A small, concrete example is more useful than a large feature list.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is confusing or missing?
+      description: Include the lesson/activity or interface location, if known.
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: What should become easier to understand or do?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change
+      description: A sketch in words is enough. No new syntax, screen, or asset is required.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Observations or evidence
+      description: Separate a firsthand observation, research source, and design hypothesis. Do not describe an untested idea as a proven learning improvement.
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Tradeoffs to consider
+      description: Offline use, reading load, keyboard/flat-map access, progress safety, or another concern.
