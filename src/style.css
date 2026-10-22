@@ -1,0 +1,869 @@
+/* Lantern Garden: First Light
+   Warm ivory field notebook beside a generous 3D garden.
+   Forest ink, one orange action accent, rectangular controls, upright type.
+
+   Notebook rule of thumb: one goal, one work area, one feedback area, then optional
+   disclosures (field notes, journal). Anything else belongs in a disclosure. */
+
+:root {
+  --ivory: #f6f1e3;
+  --paper: #fbf8ee;
+  --paper-deep: #efe8d3;
+  --field: #fffdf5;
+  --rule: #d6cdb0;
+  --rule-soft: #e4dcc3;
+  --ink: #1f3b31;
+  --ink-soft: #46604f;
+  --ink-faint: #5b6c5e;
+  --forest: #29483d;
+  --moss: #7ea866;
+  --mint: #dcefdc;
+  --water: #8fd0bb;
+  --clay: #c58a63;
+  --clay-deep: #98603f;
+  --amber: #f2a93b;
+  --amber-soft: #fbe3ac;
+  --orange: #bd4b16;
+  --orange-hover: #ad4413;
+  --orange-press: #913810;
+  --focus: #1f3b31;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace;
+  --notebook-width: clamp(344px, 34vw, 440px);
+  --gap: 14px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--ivory);
+  color: var(--ink);
+  font: 400 16px/1.5 var(--sans);
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+em, i, cite, dfn, address, var { font-style: normal; }
+button, input, textarea { font: inherit; color: inherit; }
+h1, h2, h3, p, dl, dd { margin: 0; }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute; left: 12px; top: -80px; z-index: 50;
+  padding: 10px 14px; background: var(--ink); color: var(--paper);
+  font-weight: 600; text-decoration: none;
+}
+.skip-link:focus { top: 12px; }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--paper);
+}
+
+/* ------------------------------------------------------------------ layout */
+
+.app {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--notebook-width);
+  height: 100vh;
+  height: 100dvh;
+  min-height: 480px;
+}
+
+/* ------------------------------------------------------------------ stage */
+
+.stage {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(58% 52% at 80% 16%, rgba(255, 214, 128, 0.58), rgba(255, 214, 128, 0) 72%),
+    radial-gradient(70% 55% at 12% 100%, rgba(126, 168, 102, 0.34), rgba(126, 168, 102, 0) 72%),
+    linear-gradient(180deg, #e2f1e1 0%, #ecf2da 56%, #f3ecd1 100%);
+}
+/* Act identity is only a change of hour: still light, still warm, ink stays readable on it. */
+.stage:has(.world[data-act="2"]) {
+  background:
+    radial-gradient(58% 52% at 80% 16%, rgba(255, 226, 150, 0.55), rgba(255, 226, 150, 0) 72%),
+    radial-gradient(70% 55% at 12% 100%, rgba(126, 168, 102, 0.42), rgba(126, 168, 102, 0) 72%),
+    linear-gradient(180deg, #dcf0d6 0%, #e8f1d2 56%, #f1ebcf 100%);
+}
+.stage:has(.world[data-act="3"]),
+.stage:has(.world[data-act="4"]) {
+  background:
+    radial-gradient(58% 52% at 80% 16%, rgba(255, 205, 130, 0.6), rgba(255, 205, 130, 0) 72%),
+    radial-gradient(70% 55% at 12% 100%, rgba(197, 138, 99, 0.28), rgba(197, 138, 99, 0) 72%),
+    linear-gradient(180deg, #ecf0d8 0%, #f2eed2 56%, #f4e7c8 100%);
+}
+.stage:has(.world[data-act="5"]) {
+  background:
+    radial-gradient(60% 55% at 80% 14%, rgba(255, 196, 110, 0.66), rgba(255, 196, 110, 0) 72%),
+    radial-gradient(70% 55% at 12% 100%, rgba(197, 138, 99, 0.3), rgba(197, 138, 99, 0) 72%),
+    linear-gradient(180deg, #f1e9cd 0%, #f2e2bf 56%, #efd6ad 100%);
+}
+/* faint survey grid: the world as a technical plate */
+.stage::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    repeating-linear-gradient(0deg, rgba(31, 59, 49, 0.045) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(90deg, rgba(31, 59, 49, 0.045) 0 1px, transparent 1px 56px);
+  -webkit-mask-image: radial-gradient(75% 75% at 50% 52%, #000 30%, transparent 100%);
+  mask-image: radial-gradient(75% 75% at 50% 52%, #000 30%, transparent 100%);
+}
+.stage::after {
+  content: "";
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  box-shadow: inset 0 0 90px rgba(31, 59, 49, 0.16);
+}
+
+.stage-title {
+  position: absolute; z-index: 4;
+  top: clamp(16px, 3vh, 30px); left: clamp(18px, 3vw, 36px);
+  max-width: min(60%, 460px);
+  pointer-events: none;
+}
+.stage-title::before {
+  content: "";
+  display: block; width: 44px; height: 5px; margin-bottom: 12px;
+  background: var(--orange);
+}
+.eyebrow {
+  font: 600 11px/1.3 var(--mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+#scene-title {
+  margin-top: 6px;
+  font-size: clamp(28px, 3.7vw, 50px);
+  line-height: 1.02;
+  font-weight: 780;
+  letter-spacing: -0.025em;
+  color: var(--forest);
+  text-wrap: balance;
+}
+.stage-count {
+  display: inline-block; margin-top: 12px; padding: 3px 9px 2px;
+  border: 1.5px solid var(--ink); background: rgba(251, 248, 238, 0.86);
+  font: 600 12px/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+}
+.stage-count-label { color: var(--ink-soft); }
+
+.world {
+  position: relative;
+  min-width: 0; min-height: 0;
+  overflow: hidden;
+}
+.world-canvas {
+  position: absolute; inset: 0;
+  display: block;
+  width: 100%; height: 100%;
+  touch-action: manipulation;
+  outline: none;
+}
+.world-canvas.is-pointing { cursor: pointer; }
+
+/* Heading readout: forward is where Pip faces, not screen-up */
+.world-heading {
+  position: absolute; z-index: 4;
+  left: clamp(14px, 2.4vw, 30px); bottom: clamp(12px, 2.2vh, 24px);
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 16px 8px 8px;
+  background: rgba(251, 248, 238, 0.94);
+  border: 1.5px solid var(--ink);
+  box-shadow: 4px 4px 0 rgba(31, 59, 49, 0.9);
+  pointer-events: none;
+}
+.heading-dial { width: 76px; height: 76px; flex: none; display: block; }
+.dial-ring { fill: var(--paper-deep); stroke: var(--ink); stroke-width: 1.2; }
+.dial-letter { fill: var(--ink-soft); font: 700 10px var(--mono); text-anchor: middle; dominant-baseline: central; }
+.dial-letter.is-north { fill: var(--ink); }
+.dial-arrow-line { stroke: var(--orange); stroke-width: 4; stroke-linecap: butt; }
+.dial-arrow-head { fill: var(--orange); }
+.dial-hub { fill: var(--ink); }
+.heading-words { display: grid; gap: 1px; }
+.heading-kicker { font: 600 11px/1.2 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+.heading-name { font-size: clamp(22px, 2.4vw, 30px); line-height: 1.05; font-weight: 800; letter-spacing: 0.04em; color: var(--orange); }
+.heading-tile { font: 600 12px/1.3 var(--mono); color: var(--ink-soft); }
+
+.world-note {
+  position: absolute; z-index: 4; right: clamp(14px, 2.4vw, 30px); top: clamp(16px, 3vh, 30px);
+  max-width: 260px; padding: 8px 12px;
+  background: var(--amber-soft); border: 1.5px solid var(--ink);
+  font-size: 13px; line-height: 1.4;
+}
+
+/* Tile map: keyboard route into the world, and the whole world in flat view */
+.world-tilemap {
+  --cell: clamp(44px, 8.4vmin, 84px);
+  display: grid; gap: 10px;
+  padding: 14px 16px 16px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  box-shadow: 5px 5px 0 rgba(31, 59, 49, 0.9);
+}
+.tilemap-title { font: 600 11px/1.3 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+.tilemap-grid { display: grid; gap: 6px; width: max-content; max-width: 100%; }
+.tm-col, .tm-row, .tm-corner {
+  display: grid; place-items: center;
+  font: 600 11px/1 var(--mono); color: var(--ink-faint);
+}
+.tm-col { height: 16px; }
+.tm-row { width: 16px; }
+.tm-void {
+  width: var(--cell); height: var(--cell);
+  border: 1px dashed rgba(31, 59, 49, 0.28);
+  background: repeating-linear-gradient(135deg, rgba(79, 153, 132, 0.22) 0 6px, rgba(79, 153, 132, 0.07) 6px 12px);
+}
+
+.tm-tile {
+  position: relative;
+  display: grid; align-content: center; justify-items: center; gap: 1px;
+  width: var(--cell); height: var(--cell); min-width: 44px; min-height: 44px;
+  padding: 2px;
+  background: #f0e4c2;
+  border: 2px solid var(--clay-deep);
+  border-bottom-width: 6px;
+  border-radius: 0;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 90ms ease, background-color 120ms ease;
+}
+.tm-tile:hover { background: #f7edcf; }
+.tm-tile:active { transform: translateY(3px); border-bottom-width: 3px; }
+.tm-name { font: 700 14px/1 var(--mono); }
+.tm-role { font: 700 9px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); min-height: 9px; }
+.tm-tile.is-start { background: #f2c39b; border-color: var(--clay-deep); }
+.tm-tile.is-goal { background: #f7bf55; border-color: #835514; box-shadow: 0 0 0 3px rgba(242, 169, 59, 0.35); }
+.tm-tile.is-trail { background: #d3e7c2; border-color: #4f743f; }
+.tm-tile.is-choice::before {
+  content: ""; position: absolute; inset: 4px;
+  border: 2px dashed var(--forest); pointer-events: none;
+}
+.tm-tile[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 1px; }
+.tm-tile[aria-pressed="true"] .tm-role::after { content: " ✓"; }
+.tm-pip { position: absolute; inset: 0; display: none; place-items: center; pointer-events: none; }
+.tm-tile.is-here .tm-pip { display: grid; }
+.tm-tile.is-here .tm-name { opacity: 0.0; }
+.tm-pip svg { width: 70%; height: 70%; transform: rotate(calc(var(--turn, 0) * 90deg)); transition: transform 300ms ease; }
+.tm-pip .pip-body { fill: var(--orange); stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: miter; }
+.tm-pip .pip-eye { fill: var(--amber-soft); }
+
+/* Nursery plants on the flat map: a leaf mark plus dose dots. Shape carries the meaning
+   (filled dot = given, hollow = still needed, check = restored), colour is only a bonus. */
+.tm-tile.has-plant { border-top: 5px solid var(--forest); padding-top: 12px; }
+.tm-tile.has-plant .tm-role:empty { min-height: 0; }
+.tm-tile.is-plant-dry { border-top-style: dashed; }
+.tm-tile.is-plant-ready { border-top-style: double; border-top-width: 6px; }
+.tm-plant {
+  position: absolute; left: 2px; right: 2px; top: 3px;
+  display: flex; align-items: center; justify-content: center; gap: 2px;
+  font: 700 10px/1 var(--mono); color: var(--forest);
+  pointer-events: none;
+}
+.tm-leaf { width: 11px; height: 11px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.tm-tile.is-plant-dry .tm-leaf { transform: rotate(38deg); stroke-dasharray: 2.2 1.6; }
+.tm-dose { width: 7px; height: 7px; flex: none; border: 1.5px solid var(--forest); border-radius: 50%; background: transparent; }
+.tm-dose.is-full { background: var(--forest); }
+.tm-plant-count { padding-left: 1px; }
+.tm-plant-ok { padding-left: 2px; font-size: 11px; }
+
+/* 3D mode: the tile map is a labelled list of real buttons that appears for keyboard users */
+.world:not(.is-flat) .world-tilemap:not(:focus-within) {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; border: 0; box-shadow: none;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+.world:not(.is-flat) .world-tilemap:focus-within {
+  position: absolute; z-index: 6; right: clamp(14px, 2.4vw, 30px); top: 50%;
+  transform: translateY(-50%);
+  max-width: calc(100% - 28px);
+  max-height: calc(100% - 28px);
+  overflow: auto;
+}
+
+/* Flat view: the world scrolls inside the stage, so no tile is ever out of reach */
+.world.is-flat {
+  display: grid; place-items: center;
+  padding: clamp(78px, 14vh, 130px) 18px clamp(78px, 12vh, 110px);
+  overflow: auto;
+}
+.world.is-flat .world-canvas { display: none; }
+.world.is-flat .world-tilemap { position: relative; margin: auto; }
+
+/* Stage tools float over the garden's lower right: view and install only */
+.stage-bar {
+  position: absolute; z-index: 5;
+  right: clamp(14px, 2.4vw, 30px); bottom: clamp(12px, 2.2vh, 24px);
+  display: flex; align-items: center; gap: 8px;
+}
+.stage-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+.model-line { font-size: 14px; color: var(--ink); }
+.model-line-key {
+  display: inline-block; margin-right: 8px; padding: 1px 7px;
+  background: var(--ink); color: var(--paper);
+  font: 700 11px/1.5 var(--mono); letter-spacing: 0.12em; text-transform: uppercase;
+}
+#model-label { font-family: var(--mono); font-size: 13px; }
+
+.tool-button {
+  min-height: 44px; padding: 6px 14px;
+  background: rgba(251, 248, 238, 0.94); border: 1.5px solid var(--ink); border-radius: 0;
+  box-shadow: 3px 3px 0 rgba(31, 59, 49, 0.9);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.tool-button:hover { background: var(--mint); }
+.tool-button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(31, 59, 49, 0.9); }
+.when-flat { display: none; }
+.app:has(.world.is-flat) .when-3d { display: none; }
+.app:has(.world.is-flat) .when-flat { display: inline; }
+
+/* --------------------------------------------------------------- notebook */
+
+.notebook {
+  position: relative;
+  display: flex; flex-direction: column;
+  min-width: 0; min-height: 0;
+  background:
+    linear-gradient(90deg, transparent 0 19px, rgba(201, 83, 26, 0.5) 19px 20px, transparent 20px 23px, rgba(201, 83, 26, 0.5) 23px 24px, transparent 24px),
+    var(--paper);
+  border-left: 2px solid var(--ink);
+}
+/* binder perforations */
+.notebook::before {
+  content: ""; position: absolute; left: 5px; top: 0; bottom: 0; width: 8px; pointer-events: none;
+  background: repeating-linear-gradient(180deg, transparent 0 22px, rgba(31, 59, 49, 0.2) 22px 34px, transparent 34px 56px);
+}
+.notebook-scroll {
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; gap: var(--gap);
+  overflow-y: auto; overscroll-behavior: contain;
+  padding: 16px 18px 14px 38px;
+  scrollbar-width: thin; scrollbar-color: var(--rule) transparent;
+}
+.nb-intro { display: grid; gap: 12px; align-content: start; }
+.nb-extras { display: grid; gap: 8px; align-content: start; }
+
+/* lesson header: phase and title, with the lesson map one tap away */
+.nb-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.nb-title { min-width: 0; }
+.phase { font: 700 11px/1.3 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); }
+.nb-title #lesson-title {
+  margin-top: 3px;
+  font: 780 clamp(22px, 2.2vw, 28px)/1.1 var(--sans);
+  letter-spacing: -0.02em; color: var(--forest);
+  text-wrap: balance;
+}
+#lesson-title:focus { outline: none; }
+#lesson-title:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+
+.map-button {
+  flex: none; display: grid; justify-items: center; gap: 0;
+  min-width: 64px; min-height: 44px; padding: 3px 10px 4px;
+  background: var(--field); border: 1.5px solid var(--ink); border-radius: 0;
+  box-shadow: 0 3px 0 var(--ink);
+  cursor: pointer;
+}
+.map-button:hover { background: var(--mint); }
+.map-button:active { transform: translateY(3px); box-shadow: none; }
+.map-button-label { font: 700 12px/1.2 var(--sans); }
+.map-button-count { font: 700 12px/1.2 var(--mono); color: var(--orange-press); }
+
+/* the one live instruction */
+.goal-note {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start;
+  padding: 10px 12px;
+  background: var(--amber-soft);
+  border-left: 5px solid var(--orange);
+  font-size: 16px; line-height: 1.4; font-weight: 550;
+}
+.goal-key { padding-top: 3px; font: 800 11px/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange-press); }
+
+.entry-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; margin-bottom: 8px; }
+.entry-head h2 { font: 700 13px/1.3 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+.entry-note { font: 600 12px/1.3 var(--mono); color: var(--ink-soft); }
+
+/* work area: program, with the prediction beside it whenever the prediction is shown */
+.work { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); align-items: start; }
+.work:has(#prediction-panel:not([hidden])) { grid-template-columns: minmax(0, 1fr) minmax(112px, 8rem); }
+
+.editor {
+  position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
+  height: clamp(132px, 24dvh, 264px); min-height: 120px; max-height: 70dvh;
+  resize: vertical; overflow: hidden;
+  background: var(--field); border: 1.5px solid var(--ink);
+}
+.editor:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
+.code-lines {
+  min-height: 0; overflow: hidden; padding: 10px 0;
+  background: var(--paper-deep); border-right: 1px solid var(--rule);
+  font: 500 13px/24px var(--mono); color: var(--ink-faint); text-align: right;
+  user-select: none;
+}
+.code-lines span { position: relative; display: block; height: 24px; padding-right: 9px; }
+.code-lines .is-active, .code-lines .active-line {
+  background: var(--orange); color: #fff; font-weight: 800;
+}
+.code-lines .is-active::before, .code-lines .active-line::before {
+  content: "▶"; position: absolute; left: 6px; top: 0; font-size: 9px;
+}
+.program {
+  display: block; width: 100%; height: 100%; min-height: 0; resize: none;
+  padding: 10px 12px; margin: 0;
+  background: transparent; border: 0; border-radius: 0; outline: none;
+  font: 500 15px/24px var(--mono); color: var(--ink);
+  tab-size: 2; white-space: pre; overflow: auto;
+}
+.program[readonly] { background: repeating-linear-gradient(135deg, transparent 0 8px, rgba(31, 59, 49, 0.035) 8px 16px); }
+
+/* prediction: a short column of choices, the long instruction is the goal above */
+.prediction .entry-head { margin-bottom: 8px; }
+.prediction-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 6px; }
+.prediction-options button {
+  min-width: 0; min-height: 44px; padding: 6px 8px;
+  background: var(--field); border: 1.5px solid var(--ink); border-radius: 0;
+  font: 700 15px var(--mono); cursor: pointer;
+}
+.prediction-options button:hover:not(:disabled) { background: var(--mint); }
+.prediction-options button[aria-pressed="true"] { background: var(--forest); color: var(--paper); box-shadow: inset 0 -4px 0 var(--amber); }
+.prediction-options button:disabled:not([aria-pressed="true"]) { opacity: 0.55; cursor: not-allowed; }
+.prediction-status { margin-top: 8px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
+
+/* disclosures: field notes (native details) and the journal (button + panel) share one look */
+.disclosure > summary,
+.disclosure-bar {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  min-height: 44px; padding: 6px 12px;
+  background: var(--field); border: 1.5px solid var(--ink-faint); border-radius: 0;
+  font-size: 14px; font-weight: 700; line-height: 1.2; color: var(--ink); text-align: left;
+  list-style: none; cursor: pointer;
+}
+.disclosure > summary::-webkit-details-marker { display: none; }
+.disclosure > summary::after,
+.disclosure-bar::after {
+  content: ""; flex: none; width: 8px; height: 8px; margin: -3px 2px 0 0;
+  border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+.disclosure[open] > summary::after,
+.disclosure-bar[aria-expanded="true"]::after { margin-top: 3px; transform: rotate(-135deg); }
+.disclosure > summary:hover,
+.disclosure-bar:hover { background: var(--mint); }
+.disclosure[open] > summary,
+.disclosure-bar[aria-expanded="true"] { border-color: var(--ink); background: var(--paper-deep); }
+.disclosure-hint { margin-left: auto; font: 500 12px/1.2 var(--mono); color: var(--ink-soft); }
+
+.disclosure-body,
+.save-controls {
+  display: grid; gap: 12px;
+  padding: 12px; background: var(--field);
+  border: 1.5px solid var(--ink); border-top: 0;
+}
+.story { font-size: 15px; line-height: 1.5; }
+.note-block { display: grid; gap: 4px; }
+.note-block h3 { font: 700 12px/1.3 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+.transmission h3 { color: var(--orange-press); }
+.transmission h3::before { content: "▸ "; }
+.transmission p { padding-left: 10px; border-left: 2px solid var(--clay); font-size: 15px; line-height: 1.5; }
+.command-help { font-size: 14px; line-height: 1.45; color: var(--ink-soft); }
+.command-key { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
+.command-key div { padding: 6px 8px; border: 1px solid var(--rule); background: var(--paper); }
+.command-key dt { font: 700 13px/1.3 var(--mono); color: var(--orange-press); }
+.command-key dd { font-size: 12px; line-height: 1.3; color: var(--ink-soft); }
+.review-note { font-size: 13px; line-height: 1.4; color: var(--ink-soft); }
+
+/* journal panel */
+.progress-row { display: flex; align-items: center; gap: 12px; }
+.progress-row label { font: 700 11px/1.3 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+progress {
+  flex: 1; height: 10px; -webkit-appearance: none; appearance: none;
+  border: 1.5px solid var(--ink); border-radius: 0; background: var(--field); color: var(--forest);
+}
+progress::-webkit-progress-bar { background: var(--field); }
+progress::-webkit-progress-value { background: var(--forest); }
+progress::-moz-progress-bar { background: var(--forest); }
+.status-line { font: 500 12px/1.4 var(--mono); color: var(--ink-soft); }
+.save-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.quiet-button {
+  min-height: 44px; padding: 6px 12px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 0;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.quiet-button:hover { background: var(--mint); }
+.quiet-button.danger { border-color: #8a3b17; color: #7b310f; }
+.quiet-button.danger:hover { background: #f8e0cf; }
+
+.motion-toggle {
+  position: relative; display: inline-flex; align-items: center; gap: 10px; align-self: start;
+  min-height: 44px; padding: 0 4px; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.motion-toggle input {
+  position: absolute; left: 0; top: 50%; width: 44px; height: 44px; margin: 0; transform: translateY(-50%);
+  opacity: 0; cursor: pointer;
+}
+.motion-box {
+  position: relative; flex: none; width: 22px; height: 22px;
+  border: 2px solid var(--ink); background: var(--paper);
+}
+.motion-toggle input:checked + .motion-box { background: var(--forest); }
+.motion-toggle input:checked + .motion-box::after {
+  content: ""; position: absolute; left: 6px; top: 1px; width: 5px; height: 11px;
+  border: solid var(--paper); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
+}
+.motion-toggle input:focus-visible + .motion-box { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* action dock: one feedback area, then the actions it is about */
+.action-dock {
+  flex: none; position: relative; z-index: 2;
+  padding: 10px 18px 12px 38px;
+  background: var(--paper);
+  border-top: 2px solid var(--ink);
+  box-shadow: 0 -10px 18px -12px rgba(31, 59, 49, 0.28);
+}
+.feedback-zone {
+  margin-bottom: 10px;
+  background: var(--field); border-left: 5px solid var(--moss);
+  max-height: 34dvh; overflow-y: auto;
+}
+.feedback {
+  min-height: 2.9em; padding: 7px 10px;
+  font-size: 14px; line-height: 1.4; color: var(--ink);
+}
+.hint { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; align-items: start; padding: 7px 10px 8px; background: var(--mint); border-top: 1px solid var(--rule); }
+.hint h2 { padding-top: 2px; font: 800 11px/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--forest); }
+.hint p { font-size: 14px; line-height: 1.4; }
+
+.actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.actions-more { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.action {
+  min-height: 46px; padding: 6px 8px;
+  background: var(--paper); border: 1.5px solid var(--ink); border-radius: 0;
+  font-size: 14px; line-height: 1.2; font-weight: 700; color: var(--ink);
+  cursor: pointer;
+  transition: transform 80ms ease, background-color 120ms ease, box-shadow 120ms ease;
+  box-shadow: 0 3px 0 var(--ink);
+}
+.action:hover:not(:disabled) { background: var(--mint); }
+.action:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
+.action.primary {
+  grid-column: span 2;
+  background: var(--orange); border-color: var(--orange-press); color: #fff;
+  font-size: 16px; letter-spacing: 0.01em;
+  box-shadow: 0 3px 0 var(--orange-press);
+}
+.action.primary:hover:not(:disabled) { background: var(--orange-hover); }
+/* secondary actions are quiet on purpose: undo, reset and a clue never compete with Run */
+.action.quiet {
+  min-height: 44px; background: transparent; border-color: var(--ink-faint);
+  font-size: 13px; font-weight: 600; box-shadow: none;
+}
+.action.quiet:hover:not(:disabled) { background: var(--mint); border-color: var(--ink); }
+.action.quiet:active:not(:disabled) { transform: none; }
+.action.advance { grid-column: 1 / -1; background: var(--forest); border-color: var(--ink); color: var(--paper); box-shadow: 0 3px 0 var(--amber); font-size: 15px; }
+.action.advance:hover:not(:disabled) { background: #1e382f; }
+/* once the lesson is complete, "continue" is the primary action and Run steps back */
+.actions:has(.advance:not([hidden])) .action.primary {
+  background: var(--paper); color: var(--ink); border-color: var(--ink); box-shadow: 0 3px 0 var(--ink); font-size: 14px;
+}
+.actions:has(.advance:not([hidden])) .action.primary:hover:not(:disabled) { background: var(--mint); }
+.action:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.action:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+/* stage state classes for controller use */
+.is-active { font-weight: 700; }
+.is-complete { color: var(--forest); }
+[data-stage].is-active { background: var(--orange); color: #fff; border-color: var(--orange-press); }
+[data-stage].is-complete { background: var(--forest); color: var(--paper); border-color: var(--ink); }
+
+/* ------------------------------------------------------------ check (recap) */
+/* A short question inside the ending/journal summary: radio-style choices, one reply line. */
+
+.recap-question, .check-question {
+  min-width: 0; margin: 14px 0 0; padding: 10px 12px 12px;
+  border: 1.5px solid var(--ink); background: var(--field);
+}
+.recap-question legend, .check-question legend { padding: 0 6px; font-size: 15px; line-height: 1.4; font-weight: 700; }
+.check-prompt { font-size: 15px; line-height: 1.45; }
+.recap-choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.check-choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.check-choices.is-stacked { display: grid; }
+.check-choice {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  min-height: 44px; padding: 8px 12px;
+  background: var(--paper); border: 1.5px solid var(--ink-faint); border-radius: 0;
+  font-size: 15px; line-height: 1.3; font-weight: 600; cursor: pointer;
+}
+.check-choice input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--forest); cursor: pointer; }
+.check-choice:hover { background: var(--mint); border-color: var(--ink); }
+.check-choice:has(input:checked) { background: var(--mint); border-color: var(--ink); box-shadow: inset 5px 0 0 var(--forest); padding-left: 16px; }
+.check-choice:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.check-response {
+  display: block; width: 100%; min-height: 44px; margin-top: 8px; padding: 8px 10px;
+  background: var(--field); border: 1.5px solid var(--ink); border-radius: 0;
+  font: 500 15px/1.4 var(--sans);
+}
+.check-response:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.recap-feedback {
+  margin-top: 10px; padding: 8px 10px; min-height: 2.6em;
+  background: var(--paper-deep); border-left: 5px solid var(--moss);
+  font-size: 15px; line-height: 1.45;
+}
+.check-feedback {
+  margin-top: 10px; padding: 8px 10px; min-height: 2.6em;
+  background: var(--paper-deep); border-left: 5px solid var(--moss);
+  font-size: 15px; line-height: 1.45;
+}
+.check-feedback:empty { display: none; }
+.check-feedback.is-correct, .check-feedback[data-state="correct"] { background: var(--mint); border-left-color: var(--forest); }
+.check-feedback.is-retry, .check-feedback[data-state="retry"] { background: var(--amber-soft); border-left-color: var(--orange); }
+
+/* ----------------------------------------------------------------- ending */
+/* Fixed to the viewport (never to a tall stacked page) and scrolls as a whole: nothing is unreachable. */
+
+.ending {
+  position: fixed; inset: 0; z-index: 20;
+  display: grid; padding: 16px;
+  background: rgba(246, 241, 227, 0.92);
+  overflow: auto; overscroll-behavior: contain;
+}
+.ending-sheet {
+  width: min(560px, 100%); margin: auto; padding: 24px 26px 26px;
+  background: var(--paper); border: 2px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--forest);
+}
+.ending-sheet::before { content: ""; display: block; width: 52px; height: 5px; margin-bottom: 14px; background: var(--orange); }
+#ending-title { margin-top: 8px; font: 780 clamp(24px, 4vw, 36px)/1.1 var(--sans); letter-spacing: -0.02em; color: var(--forest); text-transform: none; }
+#ending-title:focus { outline: none; }
+#ending-title:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+#ending-copy { margin-top: 12px; font-size: 16px; line-height: 1.5; }
+#journal-summary { margin-top: 12px; }
+#journal-summary p { font-size: 15px; line-height: 1.5; }
+#journal-summary p + p { margin-top: 8px; }
+.journal-actions { margin-top: 14px; }
+.ending-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+#journal-summary button, .ending-sheet .action {
+  min-height: 46px; padding: 6px 16px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 0;
+  font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 3px 0 var(--ink);
+}
+#journal-summary button:hover, .ending-sheet .action:hover:not(:disabled) { background: var(--mint); }
+#journal-summary .recap-choices button[aria-pressed="true"] { background: var(--mint); border-color: var(--forest); box-shadow: inset 5px 0 0 var(--forest), 0 3px 0 var(--ink); }
+.ending-sheet .action.primary { grid-column: auto; background: var(--orange); border-color: var(--orange-press); color: #fff; box-shadow: 0 3px 0 var(--orange-press); }
+.ending-sheet .action.primary:hover:not(:disabled) { background: var(--orange-hover); }
+/* When a "next lesson" button exists (#ending-next, made by main.js) it is the one orange action;
+   replaying and going back are plain outlined buttons. It sits last, where "forward" reads naturally. */
+.ending-actions:has(#ending-next) .action:not(#ending-next) {
+  background: var(--paper); border-color: var(--ink); color: var(--ink); box-shadow: 0 3px 0 var(--ink);
+}
+.ending-actions:has(#ending-next) .action:not(#ending-next):hover:not(:disabled) { background: var(--mint); }
+.ending-actions #ending-next { margin-left: auto; }
+
+/* ------------------------------------------------------------- lesson map */
+/* Expected markup, filled by main.js:
+     #lesson-list > .lesson-group (section/div/fieldset)
+         > .lesson-group-title (h3/legend/p)  + .lesson-group-items (div/ul)
+             > button.lesson-choice > .lesson-num + .lesson-name + .lesson-status
+   State: aria-current="true" or .is-current; .is-complete; .is-locked, [aria-disabled="true"] or :disabled.
+   State is always shown by text and border style as well as colour. */
+
+dialog.lesson-map {
+  width: min(680px, calc(100vw - 24px));
+  max-width: none; max-height: min(780px, calc(100dvh - 24px));
+  margin: auto; padding: 0;
+  background: var(--paper); color: var(--ink);
+  border: 2px solid var(--ink); box-shadow: 8px 8px 0 var(--forest);
+  overflow: hidden;
+}
+dialog.lesson-map[open] { display: flex; flex-direction: column; }
+dialog.lesson-map::backdrop { background: rgba(31, 59, 49, 0.5); }
+.lesson-map-sheet { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; width: 100%; }
+.lesson-map-head {
+  flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 14px; border-bottom: 2px solid var(--ink); background: var(--paper-deep);
+}
+.lesson-map-head h2 { font: 780 20px/1.2 var(--sans); letter-spacing: -0.01em; color: var(--forest); }
+.lesson-list {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  display: grid; gap: 12px; align-content: start;
+  padding: 14px 14px 18px;
+}
+/* a group is a titled grid of choices; the title (or an items wrapper) spans the full row */
+.lesson-group {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px;
+  min-width: 0; margin: 0 0 6px; padding: 0; border: 0;
+}
+.lesson-group-title, .lesson-group > h3, .lesson-group > legend, .lesson-list > h3 {
+  grid-column: 1 / -1; padding: 0 0 4px; border-bottom: 1px solid var(--rule);
+  font: 700 12px/1.3 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft);
+}
+.lesson-group-items, .lesson-group > ul {
+  grid-column: 1 / -1; list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px;
+}
+.lesson-group-items > li, .lesson-group > ul > li { display: grid; min-width: 0; }
+.lesson-choice {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 10px;
+  width: 100%; min-height: 52px; padding: 6px 10px; text-align: left;
+  background: var(--field); border: 1.5px solid var(--ink); border-radius: 0;
+  font-size: 14px; line-height: 1.25; cursor: pointer;
+}
+.lesson-choice:hover:not([aria-disabled="true"]):not(:disabled) { background: var(--mint); }
+.lesson-num {
+  display: grid; place-items: center; width: 34px; height: 34px;
+  border: 1.5px solid var(--ink); background: var(--paper);
+  font: 700 14px/1 var(--mono);
+}
+.lesson-name { min-width: 0; font-weight: 650; overflow-wrap: anywhere; }
+.lesson-status { font: 700 11px/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
+.lesson-choice.is-complete .lesson-num { background: var(--forest); color: var(--paper); }
+.lesson-choice[aria-current="true"], .lesson-choice[aria-current="step"], .lesson-choice.is-current {
+  background: var(--amber-soft); border-width: 2px; box-shadow: inset 6px 0 0 var(--orange);
+}
+.lesson-choice[aria-current="true"] .lesson-num, .lesson-choice[aria-current="step"] .lesson-num, .lesson-choice.is-current .lesson-num { border-color: var(--orange-press); }
+.lesson-choice[aria-current="true"] .lesson-status, .lesson-choice[aria-current="step"] .lesson-status, .lesson-choice.is-current .lesson-status { color: var(--orange-press); }
+/* locked: dashed and flat, readable text (never washed out) */
+.lesson-choice.is-locked, .lesson-choice[aria-disabled="true"], .lesson-choice:disabled {
+  background: var(--paper-deep); border-style: dashed; border-color: var(--ink-faint); color: var(--ink-soft); cursor: not-allowed;
+}
+.lesson-choice.is-locked .lesson-num, .lesson-choice[aria-disabled="true"] .lesson-num, .lesson-choice:disabled .lesson-num {
+  border-style: dashed; border-color: var(--ink-faint); background: transparent;
+}
+
+/* ------------------------------------------------------------------ motion */
+
+@media (prefers-reduced-motion: no-preference) {
+  .stage-title > * { animation: title-in 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .stage-title #scene-title { animation-delay: 90ms; }
+  .stage-title .stage-count { animation-delay: 190ms; }
+  .world-heading { animation: title-in 700ms 300ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+}
+@keyframes title-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+body:has(#reduce-motion-toggle:checked) *,
+body:has(#reduce-motion-toggle:checked) *::before,
+body:has(#reduce-motion-toggle:checked) *::after { animation: none !important; transition: none !important; }
+
+/* --------------------------------------------------------------- responsive */
+
+/* Tablet landscape (about 1024 x 768): keep the editor readable, give the garden the rest */
+@media (max-width: 1100px) and (min-width: 861px) {
+  :root { --notebook-width: 352px; }
+  .notebook-scroll { padding: 14px 16px 10px 36px; }
+  .action-dock { padding: 8px 16px 10px 36px; }
+  .world-heading { padding: 6px 12px 6px 6px; gap: 8px; }
+  .heading-dial { width: 64px; height: 64px; }
+}
+
+/* Compact landscape (a keyboard-folio at about 768 x 600): still side by side, a slimmer notebook */
+@media (max-width: 860px) and (min-width: 641px) and (orientation: landscape) {
+  :root { --notebook-width: clamp(316px, 44vw, 344px); }
+  .notebook-scroll { padding: 12px 14px 10px 34px; gap: 12px; }
+  .action-dock { padding: 8px 14px 10px 34px; }
+  .world-heading { padding: 5px 10px 5px 5px; gap: 8px; }
+  .heading-dial { width: 56px; height: 56px; }
+  .heading-name { font-size: 20px; }
+  #scene-title { font-size: clamp(24px, 4vw, 32px); }
+  .goal-note { font-size: 15px; }
+}
+
+/* Short viewports: shave vertical air, keep every control */
+@media (max-height: 700px) and (min-width: 641px) {
+  .notebook-scroll { gap: 10px; }
+  .nb-intro { gap: 8px; }
+  .goal-note { padding: 8px 10px; }
+  .editor { height: clamp(120px, 22dvh, 200px); }
+  .feedback { min-height: 2.6em; padding: 5px 10px; }
+  .feedback-zone { margin-bottom: 8px; }
+  .actions-more { margin-top: 6px; }
+  .action-dock { padding-top: 8px; }
+}
+
+/* Very short landscape (small windows, on-screen keyboards): the whole notebook scrolls as one page */
+@media (max-height: 520px) and (min-width: 641px) {
+  .notebook { display: block; overflow-y: auto; }
+  .notebook-scroll { overflow: visible; }
+  .action-dock { position: static; box-shadow: none; }
+  .feedback-zone { max-height: none; }
+}
+
+/* Narrow or portrait: stack garden over notebook */
+@media (max-width: 640px), (orientation: portrait) and (max-width: 1100px) {
+  .app { display: block; height: auto; min-height: 100dvh; }
+  .stage { height: clamp(300px, 42dvh, 520px); }
+  .notebook {
+    display: block; border-left: 0; border-top: 2px solid var(--ink);
+    background:
+      linear-gradient(90deg, transparent 0 15px, rgba(201, 83, 26, 0.5) 15px 16px, transparent 16px 19px, rgba(201, 83, 26, 0.5) 19px 20px, transparent 20px),
+      var(--paper);
+  }
+  .notebook::before { left: 3px; }
+  .notebook-scroll { overflow: visible; padding: 14px 16px 14px 34px; }
+  .action-dock {
+    position: sticky; bottom: 0;
+    padding: 8px 16px calc(10px + env(safe-area-inset-bottom)) 34px;
+  }
+  .stage-title { max-width: 72%; }
+  #scene-title { font-size: clamp(24px, 5.2vw, 38px); }
+  .stage-title::before { margin-bottom: 8px; }
+  .stage-count { margin-top: 8px; }
+  .heading-dial { width: 56px; height: 56px; }
+  .heading-name { font-size: 20px; }
+  .world-heading { gap: 8px; padding: 5px 10px 5px 5px; }
+  .world-note { top: auto; bottom: 84px; right: 14px; }
+  .app:has(.world.is-flat) .stage { height: auto; min-height: 420px; }
+}
+
+/* Stacked and wide enough (e.g. 768 x 1024): two columns, program beside the lesson */
+@media (min-width: 620px) and (max-width: 1100px) and (orientation: portrait) {
+  .notebook-scroll { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 24px; row-gap: var(--gap); align-items: start; }
+  .nb-extras { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 24px; align-items: start; }
+  .actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .action.primary { grid-column: span 2; }
+  .action.advance { grid-column: 1 / -1; }
+  .actions-more { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+  .command-key { grid-template-columns: 1fr; }
+  .command-key div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .work:has(#prediction-panel:not([hidden])) { grid-template-columns: minmax(0, 1fr); }
+  .prediction-options { grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); }
+  .disclosure-hint { display: none; }
+  .lesson-group-items, .lesson-group > ul { grid-template-columns: 1fr; }
+  .ending { padding: 10px; }
+  .ending-sheet { padding: 20px 18px 22px; }
+}
+
+@media (forced-colors: active) {
+  .action, .tm-tile, .tool-button, .quiet-button, .disclosure > summary, .disclosure-bar, .lesson-choice, .map-button, .check-choice { border: 2px solid ButtonText; }
+  .action.primary { background: Highlight; color: HighlightText; }
+  .code-lines .is-active { background: Highlight; color: HighlightText; }
+  .lesson-choice[aria-current="step"], .lesson-choice.is-current { outline: 3px solid Highlight; }
+}
+
+/* Integration: non-showModal fallback is a visible fixed overlay, not a hidden native dialog. */
+dialog.lesson-map[open] { position: fixed; inset: 12px; z-index: 100; }
+/* Critical save/offline state remains discoverable even with optional journal details closed. */
+#journal-status { display: inline; max-width: 50%; font-size: 11px; line-height: 1.3; letter-spacing: normal; text-align: right; white-space: normal; }
+.hint h3 { padding-top: 2px; font: 800 11px/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--forest); }
+.command-help { white-space: pre-line; }

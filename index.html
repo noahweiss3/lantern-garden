@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#29483d">
+  <meta name="description" content="Lantern Garden: First Light. A quiet offline coding adventure. Guide Pip, one instruction at a time.">
+  <title>Lantern Garden: First Light</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.webmanifest">
+</head>
+<body>
+  <a class="skip-link" href="#program">Skip to Pip’s instructions</a>
+
+  <div class="app">
+    <!-- ============ The garden: generous 3D world ============ -->
+    <main class="stage" aria-labelledby="scene-title">
+      <header class="stage-title">
+        <p class="eyebrow" id="chapter-label">LANTERN GARDEN / CHAPTER 01</p>
+        <h1 id="scene-title">The first light</h1>
+        <p class="stage-count"><span class="stage-count-label">Activity</span> <span id="stage-counter">1 of 3</span></p>
+      </header>
+
+      <div id="world" class="world" role="group" aria-label="Garden map for Pip’s route"></div>
+
+      <footer class="stage-bar">
+        <!-- Pip’s position and heading as text. Visually quiet because the heading dial already shows it. -->
+        <p class="model-line visually-hidden"><span class="model-line-key">Pip</span> <span id="model-label">Pip · B4 · facing east</span></p>
+        <div class="stage-tools">
+          <button id="flat-toggle" class="tool-button" type="button" aria-describedby="flat-help">
+            <span class="when-3d">Flat view</span><span class="when-flat">3D view</span>
+          </button>
+          <span id="flat-help" class="visually-hidden">Switches between the 3D garden and a flat map of labelled tile buttons without reloading or changing your route.</span>
+          <span id="view-status" class="visually-hidden" role="status" aria-live="polite"></span>
+          <button id="install-button" class="tool-button" type="button" hidden>Install offline</button>
+        </div>
+      </footer>
+    </main>
+
+    <!-- ============ The field notebook ============
+         Reading order: lesson, goal, work area, optional notes, journal; feedback and actions stay docked. -->
+    <aside class="notebook" aria-label="Field notebook">
+      <div class="notebook-scroll">
+
+        <div class="nb-intro">
+          <div class="nb-head">
+            <div class="nb-title">
+              <p class="phase" id="phase-label">01 / Predict &amp; notice</p>
+              <h2 id="lesson-title">Where will Pip stop?</h2>
+            </div>
+            <button id="lesson-map-button" class="map-button" type="button" aria-haspopup="dialog" aria-controls="lesson-map">
+              <span class="map-button-label">Lessons</span>
+              <span id="lesson-current" class="map-button-count">1 / 20</span>
+            </button>
+          </div>
+
+          <!-- The one live instruction -->
+          <div class="goal-note">
+            <span class="goal-key">Goal</span>
+            <p id="goal-copy">Before running, choose the tile where you think Pip will stop. A guess is useful, even if it changes.</p>
+          </div>
+        </div>
+
+        <!-- Work area: the program, and (first lesson only) the prediction beside it -->
+        <div class="work">
+          <section class="editor-entry" aria-labelledby="program-heading">
+            <div class="entry-head">
+              <h2 id="program-heading">Pip’s instructions</h2>
+              <span class="entry-note">Robot language, not Python</span>
+            </div>
+            <div class="editor">
+              <div id="code-lines" class="code-lines" aria-hidden="true"><span data-line="1">1</span><span data-line="2">2</span><span data-line="3">3</span><span data-line="4">4</span></div>
+              <textarea id="program" class="program" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" wrap="off" rows="5" aria-label="Pip’s instructions" aria-describedby="command-help goal-copy">step()
+step()
+left()
+step()</textarea>
+            </div>
+          </section>
+
+          <section id="prediction-panel" class="prediction" aria-labelledby="prediction-heading">
+            <div class="entry-head">
+              <h2 id="prediction-heading">Predict</h2>
+            </div>
+            <p id="prediction-copy" class="visually-hidden">Read the four lines. Then choose Pip’s final tile before you run. You can also tap a marked tile in the garden.</p>
+            <div id="prediction-options" class="prediction-options" role="group" aria-label="Possible final tiles"></div>
+            <p class="prediction-status" id="prediction-label">No prediction yet</p>
+          </section>
+        </div>
+
+        <div class="nb-extras">
+          <!-- Optional teaching text lives here, closed by default -->
+          <details class="disclosure field-notes">
+            <summary><span class="disclosure-name">Field notes</span><span class="disclosure-hint">story · commands</span></summary>
+            <div class="disclosure-body">
+              <p id="retrieval-copy" class="story"></p>
+              <p class="story" id="story-copy">The storm has gone quiet. The garden’s lanterns haven’t. Pip has one charged cell and a short set of instructions. Let’s see where they lead.</p>
+              <div class="note-block transmission">
+                <h3 id="dialogue-name">Pip / field transmission</h3>
+                <p id="dialogue-copy">I follow instructions from top to bottom. step() moves one tile in the direction I’m facing. left() turns me on the spot.</p>
+              </div>
+              <div class="note-block">
+                <h3>Commands</h3>
+                <p id="command-help" class="command-help">Pip’s tiny robot language, not Python: step() moves forward one tile. left() and right() turn in place. One command per line.</p>
+                <dl class="command-key" aria-label="Pip’s three commands">
+                  <div><dt>step()</dt><dd>Forward one tile</dd></div>
+                  <div><dt>left()</dt><dd>Turn, same tile</dd></div>
+                  <div><dt>right()</dt><dd>Turn, same tile</dd></div>
+                </dl>
+              </div>
+          <section id="hint-panel" class="hint" aria-labelledby="hint-heading" hidden>
+            <h3 id="hint-heading">Clue</h3>
+            <p id="hint-copy"></p>
+          </section>
+              <p id="review-note" class="review-note">No timer. No lost lives. A test run is a way to find out.</p>
+            </div>
+          </details>
+
+          <!-- Progress, settings and backups: one disclosure, toggled by main.js through #progress-button -->
+          <section class="journal" aria-label="Journal and settings">
+            <button id="progress-button" class="disclosure-bar" type="button" aria-expanded="false" aria-controls="save-controls">
+              <span class="disclosure-name">Journal &amp; settings</span>
+              <span id="journal-status" class="disclosure-hint">Preparing offline…</span>
+            </button>
+            <div id="save-controls" class="save-controls" hidden>
+              <div class="progress-row">
+                <label for="chapter-progress">Path</label>
+                <progress id="chapter-progress" max="20" value="0">0 of 20</progress>
+              </div>
+              <p class="status-line"><span id="offline-status">Preparing offline files…</span> · <span id="save-status">Progress saved on this device</span></p>
+              <label class="motion-toggle" for="reduce-motion-toggle">
+                <input id="reduce-motion-toggle" type="checkbox">
+                <span class="motion-box" aria-hidden="true"></span>
+                <span>Reduce motion</span>
+              </label>
+              <div class="save-buttons">
+                <button id="export-button" class="quiet-button" type="button">Export journal</button>
+                <button id="import-button" class="quiet-button" type="button">Import journal</button>
+                <button id="erase-button" class="quiet-button danger" type="button">Erase progress</button>
+              </div>
+              <input id="import-file" class="visually-hidden" type="file" accept="application/json,.json" tabindex="-1" aria-label="Choose a Lantern Garden field journal file">
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Docked: ONE feedback area (with the open clue) directly above the actions -->
+      <div class="action-dock">
+        <div class="feedback-zone">
+          <div id="feedback" class="feedback" role="status" aria-live="polite">Start by choosing your prediction. Nothing is graded.</div>
+
+        </div>
+        <div class="actions" role="group" aria-label="Run controls">
+          <button id="continue-button" class="action advance" type="button" hidden>Follow the light →</button>
+          <button id="run-button" class="action primary" type="button">Run program</button>
+          <button id="step-button" class="action" type="button">One step</button>
+        </div>
+        <div class="actions-more" role="group" aria-label="Undo, reset and clue">
+          <button id="undo-button" class="action quiet" type="button">Undo step</button>
+          <button id="reset-button" class="action quiet" type="button">Back to dock</button>
+          <button id="hint-button" class="action quiet" type="button">Need a clue?</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ============ Ending ============ -->
+    <section id="ending" class="ending" aria-labelledby="ending-title" hidden>
+      <div class="ending-sheet">
+        <p class="eyebrow">Field journal</p>
+        <h2 id="ending-title">A light to come back to.</h2>
+        <p id="ending-copy">You guided Pip to the first light.</p>
+        <div class="ending-actions">
+          <button id="replay-button" class="action primary" type="button">Try the last route again</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ Lesson map: opened with showModal() by main.js ============ -->
+  <dialog id="lesson-map" class="lesson-map" aria-labelledby="lesson-map-title">
+    <div class="lesson-map-sheet">
+      <div class="lesson-map-head">
+        <h2 id="lesson-map-title">Lessons</h2>
+        <button id="lesson-map-close" class="quiet-button" type="button">Close</button>
+      </div>
+      <div id="lesson-list" class="lesson-list"></div>
+    </div>
+  </dialog>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
