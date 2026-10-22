@@ -8,8 +8,8 @@ Restore a storm-damaged conservatory, one small program at a time.
 
 Guide Pip through a warm 3D garden: read a plan, predict what it will do, test it, and change it. Twenty authored lessons introduce sequencing, repetition, decisions, reusable routines, and sensor-controlled loops. There is no timer, account, or score to chase.
 
-**Act 3 review checkpoint · Lessons 1–12 · 25 activities**  
-This branch contains the first 12 lessons. The complete course is available on the final stacked review branch.
+**Act 4 review checkpoint · Lessons 1–16 · 33 activities**  
+This branch contains the first 16 lessons. The complete course is available on the final stacked review branch.
 
 ## Start here
 
@@ -28,7 +28,7 @@ Use **Node.js 24** and npm. For a fresh developer checkout, clone the project an
 ```sh
 git clone https://github.com/noahweiss3/lantern-garden.git
 cd lantern-garden
-git switch feature/act-3-sensors-and-choices
+git switch feature/act-4-visible-routines
 npm ci
 npm run dev
 ```
