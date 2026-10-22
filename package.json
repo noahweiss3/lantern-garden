@@ -1,0 +1,29 @@
+{
+  "name": "lantern-garden",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "node tests/playthrough.mjs",
+    "package:review": "npm run build && node scripts/package-review.mjs",
+    "verify:build": "node scripts/verify-build.mjs"
+  },
+  "dependencies": {
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "vite": "7.1.9",
+    "@playwright/test": "1.56.1",
+    "rollup": "4.64.12"
+  },
+  "description": "An offline-first coding adventure in a garden of small, meaningful programs.",
+  "author": "Noah Weiss",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noahweiss3/lantern-garden.git"
+  }
+}
