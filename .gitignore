@@ -1,0 +1,13 @@
+node_modules/
+dist/
+artifacts/
+test-results/
+playwright-report/
+.vercel/
+.env
+.env.*
+!.env.example
+.claude/
+.codex/
+__pycache__/
+.DS_Store
